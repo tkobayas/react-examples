@@ -16,7 +16,9 @@ import {
   SELECTION_EVENT,
   Visualization,
   VisualizationProvider,
-  VisualizationSurface
+  VisualizationSurface,
+  nodeDragSourceSpec,
+  withDragNode
 } from '@patternfly/react-topology';
 
 import "@patternfly/react-core/dist/styles/base.css";
@@ -39,7 +41,7 @@ const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: strin
         case ModelKind.graph:
           return GraphComponent;
         case ModelKind.node:
-          return DefaultNode;
+          return withDragNode(nodeDragSourceSpec('node', true, true))(DefaultNode);
         case ModelKind.edge:
           return DefaultEdge;
         default:
