@@ -53,72 +53,67 @@ const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: strin
 const NODE_SHAPE = NodeShape.ellipse;
 const NODE_DIAMETER = 75;
 
-const NODES = [
-  {
-    id: 'node-1',
-    type: 'node',
-    label: 'R1',
-    width: NODE_DIAMETER,
-    height: NODE_DIAMETER,
-    shape: NODE_SHAPE
-  },
-  {
-    id: 'node-2',
-    type: 'node',
-    label: 'R2',
-    width: NODE_DIAMETER,
-    height: NODE_DIAMETER,
-    shape: NODE_SHAPE
-  },
-  {
-    id: 'node-3',
-    type: 'node',
-    label: 'R3',
-    width: NODE_DIAMETER,
-    height: NODE_DIAMETER,
-    shape: NODE_SHAPE
-  },
-  {
-    id: 'node-4',
-    type: 'node',
-    label: 'R4',
-    width: NODE_DIAMETER,
-    height: NODE_DIAMETER,
-    shape: NODE_SHAPE
-  }
-];
+interface Node {
+  id: string;
+  type: string;
+  label: string;
+  width: number;
+  height: number;
+  shape: NodeShape;
+}
 
-const EDGES = [
-  {
-    id: 'edge-node-1-node-2',
-    type: 'edge',
-    source: 'node-1',
-    target: 'node-2',
-    edgeStyle: EdgeStyle.solid
-  },
-  {
-    id: 'edge-node-2-node-3',
-    type: 'edge',
-    source: 'node-2',
-    target: 'node-3',
-    edgeStyle: EdgeStyle.solid
-  },
-  {
-    id: 'edge-node-4-node-3',
-    type: 'edge',
-    source: 'node-4',
-    target: 'node-3',
-    edgeStyle: EdgeStyle.dashed
-  }
-];
+interface Edge {
+  id: string;
+  type: string;
+  source: string;
+  target: string;
+  edgeStyle: EdgeStyle;
+}
 
 export const TopologyGettingStartedDemo: React.FC = () => {
+  const [nodes, setNodes] = React.useState<Node[]>([]);
+  const [edges, setEdges] = React.useState<Edge[]>([]);
+
+  const [loading, setLoading] = React.useState(true); 
+
+  React.useEffect(() => {
+    setLoading(true);
+    // Fetch the data from the server
+    fetch('http://localhost:5000/data')
+      .then(response => response.json())
+      .then(data => {
+        const updatedNodes = data.NODES.map((node : Node) => ({
+          ...node,
+          width: NODE_DIAMETER,
+          height: NODE_DIAMETER,
+          shape: NODE_SHAPE
+        }));
+
+        const updatedEdges = data.EDGES.map((edge: Edge) => ({
+          ...edge,
+          edgeStyle: edge.edgeStyle === 'solid' ? EdgeStyle.solid : EdgeStyle.dashed // Add other conditions as needed
+        }));
+        
+        // Update state with the modified nodes and edges
+        setNodes(updatedNodes);
+        setEdges(updatedEdges);
+
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Error fetching data: ", error);
+      });
+  }, []); // The empty array ensures this effect runs only once
+
+  console.log("nodes: ", nodes);
+  console.log("edges: ", edges);
+
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
 
   const controller = React.useMemo(() => {
     const model: Model = {
-      nodes: NODES,
-      edges: EDGES,
+      nodes: nodes,
+      edges: edges,
       graph: {
         id: 'g1',
         type: 'graph',
@@ -135,7 +130,11 @@ export const TopologyGettingStartedDemo: React.FC = () => {
     newController.fromModel(model, false);
 
     return newController;
-  }, []);
+  }, [nodes, edges]);
+
+  if (loading) {
+    return <div>Loading...</div>; // or any loading indicator you prefer
+  }
 
   return (
     <VisualizationProvider controller={controller}>
