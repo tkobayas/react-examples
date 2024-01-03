@@ -4,42 +4,27 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 
-const NODE_SHAPE = NodeShape.ellipse;
-const NODE_DIAMETER = 75;
-
 const data = {
     NODES: [
         {
           "id": "node-1",
           "type": "node",
-          "label": "R1",
-          "width": "NODE_DIAMETER",
-          "height": "NODE_DIAMETER",
-          "shape": "NODE_SHAPE"
+          "label": "R1"
         },
         {
           "id": "node-2",
           "type": "node",
-          "label": "R2",
-          "width": "NODE_DIAMETER",
-          "height": "NODE_DIAMETER",
-          "shape": "NODE_SHAPE"
+          "label": "R2"
         },
         {
           "id": "node-3",
           "type": "node",
-          "label": "R3",
-          "width": "NODE_DIAMETER",
-          "height": "NODE_DIAMETER",
-          "shape": "NODE_SHAPE"
+          "label": "R3"
         },
         {
           "id": "node-4",
           "type": "node",
-          "label": "R4",
-          "width": "NODE_DIAMETER",
-          "height": "NODE_DIAMETER",
-          "shape": "NODE_SHAPE"
+          "label": "R4"
         }
       ],
       EDGES: [
